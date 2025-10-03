@@ -13,6 +13,12 @@ function addItem() {
   list.value.push(listItem)
   itemText.value = ''
 }
+
+function radera(listitem) {
+  list.value = list.value.filter((obj) => {
+    return obj !== listitem
+  })
+}
 </script>
 
 <template>
@@ -23,24 +29,55 @@ function addItem() {
   </header>
 
   <main>
-    <h3>Att göra:</h3>
+    <h3 id="todo">Att göra:</h3>
     <ul>
       <template v-for="itm in list" v-bind:key="itm">
-        <li v-if="!itm.done">
+        <li v-if="!itm.done" @click="itm.done = !itm.done" class="todoItm">
           {{ itm.text }}
         </li>
       </template>
     </ul>
 
-    <h3>Klart:</h3>
+    <h3 id="klart">Klart:</h3>
     <ul>
       <template v-for="itm in list" v-bind:key="itm">
-        <li v-if="itm.done">
-          {{ itm.text }}
+        <li v-if="itm.done" @click="itm.done = !itm.done" class="todoItm done">
+          {{ itm.text }} <span title="Radera" @click="radera(itm)">x</span>
         </li>
       </template>
     </ul>
   </main>
 </template>
 
-<style scoped></style>
+<style scoped>
+li span {
+  display: inline-block;
+  position: absolute;
+  right: 3em;
+  background-color: red;
+  color: wheat;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+}
+.todoItm {
+  font-weight: bold;
+  padding: 0.5em;
+  list-style-type: none;
+  cursor: pointer;
+}
+.todoItm:nth-child(odd) {
+  background-color: lightblue;
+}
+.todoItm:nth-child(even) {
+  background-color: lightgreen;
+}
+.done {
+  text-decoration: line-through;
+}
+#klart {
+  color: greenyellow;
+}
+#todo {
+  color: red;
+}
+</style>
