@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import KnappRad from './components/KnappRad.vue'
 import ResultatRad from './components/ResultatRad.vue'
+import PoangRad from './components/PoangRad.vue'
 
 const knappar = ref(['Sten', 'Sax', 'Påse'])
 const score = ref({ spelare: 0, dator: 0 })
@@ -9,6 +10,7 @@ const resultat = ref({})
 const vinnare = ref('')
 
 function hittaVinnare(valdaKnappar) {
+  vinnare.value=''
   let spelare = knappar.value.indexOf(valdaKnappar.spelare)
   let dator = knappar.value.indexOf(valdaKnappar.dator)
 
@@ -46,12 +48,9 @@ function reset() {
 
     <ResultatRad :valda-knappar="resultat" @vinnare="raknaPoang" />
 
-    <div class="score">
-      <p>
-        <span id="spelare">{{ score.spelare }}</span> - <span id="dator">{{ score.dator }}</span>
-      </p>
-      <button id="nolla" @click="reset">Nollställ poäng</button>
-    </div>
+    <PoangRad :vinnare="vinnare" />
+
+    <button id="nolla" @click="reset">Nollställ poäng</button>
   </main>
 </template>
 
@@ -59,11 +58,6 @@ function reset() {
 header {
   text-align: center;
   margin-bottom: 1.2em;
-}
-
-.score {
-  font-size: 1.2em;
-  text-align: center;
 }
 
 #nolla {
