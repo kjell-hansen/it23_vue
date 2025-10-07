@@ -1,7 +1,8 @@
 <script setup>
+import { watch } from 'vue'
 
-const props=defineProps(['knappar'])
-const emit=defineEmits(['valdaKnappar'])
+const props = defineProps(['knappar', 'reset'])
+const emit = defineEmits(['valdaKnappar'])
 
 function spelarval(e) {
   let buttons = document.getElementsByClassName('alternativ')
@@ -10,7 +11,7 @@ function spelarval(e) {
   }
   e.target.classList.add('spelarval')
 
-  emit('valdaKnappar', {spelare: e.target.textContent, dator: datorval()})
+  emit('valdaKnappar', { spelare: e.target.textContent, dator: datorval() })
 }
 
 function datorval() {
@@ -26,6 +27,19 @@ function datorval() {
   }
   return props.knappar[val]
 }
+watch(
+  () => props.reset,
+  () => {
+    if (props.reset) {
+      let buttons = document.getElementsByClassName('alternativ')
+      for (let b of buttons) {
+        b.classList.remove('datorval')
+        b.classList.remove('spelarval')
+        b.title = ''
+      }
+    }
+  },
+)
 </script>
 <template>
   <div class="knapprad">
