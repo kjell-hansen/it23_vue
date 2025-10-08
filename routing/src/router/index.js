@@ -26,6 +26,11 @@ const router = createRouter({
       component: () => import('@/views/MyView.vue'),
     },
     {
+      path: '/users',
+      name: 'Användarlista',
+      component: () => import('@/views/UsersView.vue'),
+    },
+    {
       path: '/:catchAll(.*)',
       component: () => import('@/views/NoShow.vue'),
       meta: {
