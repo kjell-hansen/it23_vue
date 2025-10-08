@@ -6,7 +6,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'Home',
       component: HomeView,
     },
     {
@@ -16,13 +16,25 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue'),
+      meta: {
+        title: 'About',
+      },
     },
     {
-      path:'/my',
-      name:'my view',
-      component:()=>import('@/views/MyView.vue')
+      path: '/my',
+      name: 'My view',
+      component: () => import('@/views/MyView.vue'),
+    },
+    {
+      path: '/:catchAll(.*)',
+      component: () => import('@/views/NoShow.vue'),
+      meta: {
+        title: '404 Not found',
+      },
     },
   ],
 })
-
+router.beforeEach((to) => {
+  document.title = to.meta?.title ?? to.name
+})
 export default router
