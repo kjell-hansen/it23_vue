@@ -31,6 +31,12 @@ const router = createRouter({
       component: () => import('@/views/UsersView.vue'),
     },
     {
+      path:'/user/:id',
+      name:"User view",
+      component:()=> import ("@/views/SingleUserView.vue"),
+      props:true
+    },
+    {
       path: '/:catchAll(.*)',
       component: () => import('@/views/NoShow.vue'),
       meta: {
