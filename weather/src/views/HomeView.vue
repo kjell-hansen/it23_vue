@@ -1,4 +1,5 @@
 <script setup>
+import ForecastResult from '@/components/forecastResult.vue';
 import { getForecast } from '@/services/forecastService';
 import { onMounted, ref } from 'vue';
 
@@ -21,9 +22,7 @@ onMounted(()=>{
     <h2>{{ location.name }}</h2>
     <p class="location">Lat: <span>{{ location.lat.toFixed(3) }}</span></p>
     <p class="location">Long: <span>{{ location.long.toFixed(3) }}</span></p>
-    <div>
-      {{ info }}
-    </div>
+    <ForecastResult :forecast="info" />
   </main>
 </template>
 <style scoped>
