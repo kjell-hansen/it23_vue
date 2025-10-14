@@ -1,7 +1,7 @@
 <script setup>
 import ForecastResult from '@/components/forecastResult.vue'
 import { getForecast } from '@/services/forecastService'
-import { ref, watch, watchEffect } from 'vue'
+import { ref, watchEffect } from 'vue'
 
 const location = ref({ lat: 60.0, long: 20.0, name: 'Nuvarande position' })
 const info = ref({})
@@ -22,15 +22,10 @@ watchEffect(() => {
     location.value.name = props.name
     location.value.lat = parseFloat(props.lat)
     location.value.long = parseFloat(props.long)
+  } else {
+    location.value = { lat: 60.0, long: 20.0, name: 'Nuvarande position' }
   }
   fetchForeCast(location.value)
-})
-
-watch(props, () => {
-  if (typeof props.name == 'undefined') {
-    location.value = { lat: 60.0, long: 20.0, name: 'Nuvarande position' }
-    fetchForeCast(location.value)
-  }
 })
 </script>
 
