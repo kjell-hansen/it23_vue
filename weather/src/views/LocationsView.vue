@@ -1,4 +1,5 @@
 <script setup>
+import router from '@/router'
 import { ref } from 'vue'
 
 const location = ref({ name: '', position: { lat: 0, long: 0 }, default: false })
@@ -21,14 +22,18 @@ function save() {
 }
 
 function setDefault(e) {
-  locationsList.value.map(itm =>{
-     itm.default=(e.position.lat==itm.position.lat && e.position.long==itm.position.long)
+  locationsList.value.map((itm) => {
+    itm.default = e.position.lat == itm.position.lat && e.position.long == itm.position.long
   })
-
+  locationsList.value.forEach((itm) => {
+    if (itm.default) {
+      router.push(`/forecast/${itm.name}/${itm.position.lat}/${itm.position.long}`)
+    }
+  })
 }
 
 function editValue(itm) {
-  location.value=itm
+  location.value = itm
 }
 function reset() {
   location.value = { name: '', position: { lat: 0, long: 0 }, default: false }
@@ -53,7 +58,12 @@ function reset() {
   <hr />
   <h3>List</h3>
   <ul>
-    <li v-for="loc in locationsList" :key="loc" :class="loc.default ? 'default' : ''" @click="setDefault(loc)">
+    <li
+      v-for="loc in locationsList"
+      :key="loc"
+      :class="loc.default ? 'default' : ''"
+      @click="setDefault(loc)"
+    >
       {{ loc.name }}
       ({{ Math.abs(loc.position.lat).toFixed(2) }}°{{ loc.position.lat > 0 ? 'N' : 'S' }}
       {{ Math.abs(loc.position.long).toFixed(2) }}°{{ loc.position.long > 0 ? 'E' : 'W' }})
@@ -81,14 +91,14 @@ li:nth-child(odd) {
 }
 span.edit {
   position: absolute;
-  right: 20%;
+  right: 4em;
   display: inline-block;
   cursor: pointer;
 }
 span.remove {
   position: absolute;
   font-weight: bold;
-  right: 10%;
+  right: 2.5em;
   display: inline-block;
   background-color: red;
   color: antiquewhite;
