@@ -3,7 +3,7 @@ import ForecastResult from '@/components/forecastResult.vue'
 import { getForecast } from '@/services/forecastService'
 import { ref, watchEffect } from 'vue'
 
-const location = ref({ lat: 60.0, long: 20.0, name: 'Nuvarande position' })
+const location = ref({})
 const info = ref({})
 const props = defineProps(['name', 'lat', 'long'])
 
@@ -18,19 +18,42 @@ function fetchForeCast(loc) {
 }
 
 watchEffect(() => {
+  // Läs in alla sparade locations
+  let locationsList = JSON.parse(localStorage.getItem('locations')) ?? []
+  let tmpLocation = {}
   if (typeof props.name !== 'undefined') {
+    // Sök location
+    tmpLocation = locationsList.find((loc) => {
+      return loc.name.toLowerCase() === props.name.toLowerCase()
+    })
+
+    if (tmpLocation) {
+      // Tilldela hittad location
+      location.value.name = tmpLocation.name
+      location.value.lat = tmpLocation.position.lat
+      location.value.long = tmpLocation.position.long
+    }
+  } else {
+    // Tilldela default-position
+    location.value = { lat: 60.0, long: 20.0, name: 'Nuvarande position' }
+  }
+
+  if (!tmpLocation && typeof props.lat !== 'undefined' && typeof props.long !== 'undefined') {
     location.value.name = props.name
     location.value.lat = parseFloat(props.lat)
     location.value.long = parseFloat(props.long)
-  } else {
-    location.value = { lat: 60.0, long: 20.0, name: 'Nuvarande position' }
   }
-  fetchForeCast(location.value)
+  if(typeof location.value.name!=='undefined') {
+    fetchForeCast(location.value)
+  }
 })
 </script>
-
 <template>
-  <main>
+  <main v-if="!location.name">
+    <h2>Angiven plats kan inte hittas</h2>
+    <p><i>{{ props.name }}</i> finns inte i listan över platser</p>
+  </main>
+  <main v-else>
     <h2>{{ location.name }}</h2>
     <p class="location">
       Lat: <span>{{ location.lat.toFixed(3) }}</span>
