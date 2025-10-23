@@ -1,16 +1,28 @@
 <script setup>
+import CurrentWeather from '@/components/currentWeather.vue'
 import ForecastResult from '@/components/forecastResult.vue'
-import { getForecast } from '@/services/forecastService'
+import { getCurrentWeather, getForecast } from '@/services/forecastService'
 import { ref, watchEffect } from 'vue'
 
 const location = ref({})
 const info = ref({})
+const currentWeather = ref({})
 const props = defineProps(['name', 'lat', 'long'])
 
 function fetchForeCast(loc) {
+  // Hämta prognos
   getForecast(loc)
     .then((response) => {
       info.value = response
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+
+  // Hämta aktuellt väder
+  getCurrentWeather(loc)
+    .then((response) => {
+      currentWeather.value = response
     })
     .catch((err) => {
       console.log(err)
@@ -43,7 +55,7 @@ watchEffect(() => {
     location.value.lat = parseFloat(props.lat)
     location.value.long = parseFloat(props.long)
   }
-  if(typeof location.value.name!=='undefined') {
+  if (typeof location.value.name !== 'undefined') {
     fetchForeCast(location.value)
   }
 })
@@ -51,7 +63,9 @@ watchEffect(() => {
 <template>
   <main v-if="!location.name">
     <h2>Angiven plats kan inte hittas</h2>
-    <p><i>{{ props.name }}</i> finns inte i listan över platser</p>
+    <p>
+      <i>{{ props.name }}</i> finns inte i listan över platser
+    </p>
   </main>
   <main v-else>
     <h2>{{ location.name }}</h2>
@@ -61,6 +75,7 @@ watchEffect(() => {
     <p class="location">
       Long: <span>{{ location.long.toFixed(3) }}</span>
     </p>
+    <CurrentWeather v-if="currentWeather?.code" :weather="currentWeather" /><br/>
     <ForecastResult :forecast="info" />
   </main>
 </template>
