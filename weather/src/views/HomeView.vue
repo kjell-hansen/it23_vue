@@ -2,12 +2,24 @@
 import CurrentWeather from '@/components/currentWeather.vue'
 import ForecastResult from '@/components/forecastResult.vue'
 import { getCurrentWeather, getForecast } from '@/services/forecastService'
-import { ref, watchEffect } from 'vue'
+import { getPosition } from '@/services/positioningService'
+import { onMounted, ref, watch, watchEffect } from 'vue'
 
 const location = ref({})
 const info = ref({})
 const currentWeather = ref({})
+const currentLocation = ref({ lat: 60.0, long: 20.0, name: 'Current location' })
 const props = defineProps(['name', 'lat', 'long'])
+
+onMounted(() => {
+  getPosition()
+    .then((pos) => {
+      currentLocation.value = { name: 'Current location', ...pos.position }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+})
 
 function fetchForeCast(loc) {
   // Hämta prognos
@@ -47,7 +59,7 @@ watchEffect(() => {
     }
   } else {
     // Tilldela default-position
-    location.value = { lat: 60.0, long: 20.0, name: 'Nuvarande position' }
+    location.value = currentLocation.value
   }
 
   if (!tmpLocation && typeof props.lat !== 'undefined' && typeof props.long !== 'undefined') {
@@ -57,6 +69,12 @@ watchEffect(() => {
   }
   if (typeof location.value.name !== 'undefined') {
     fetchForeCast(location.value)
+  }
+})
+
+watch(currentLocation, ()=>{
+  if(location.value.name==currentLocation.value.name) {
+    fetchForeCast(currentLocation.value)
   }
 })
 </script>
@@ -75,7 +93,7 @@ watchEffect(() => {
     <p class="location">
       Long: <span>{{ location.long.toFixed(3) }}</span>
     </p>
-    <CurrentWeather v-if="currentWeather?.code" :weather="currentWeather" /><br/>
+    <CurrentWeather v-if="currentWeather?.code" :weather="currentWeather" /><br />
     <ForecastResult :forecast="info" />
   </main>
 </template>
