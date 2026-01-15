@@ -3,7 +3,7 @@ import { ref } from 'vue'
 
 export const useGameStore = defineStore('game', () => {
   const score = ref({ user: 0, computer: 0 })
-  const alternatives = ref(['sten', 'sax', 'påse'])
+  const alternatives = ref(['sten', 'sax', 'påse', 'lizard', 'spock'])
   const message = ref('Dags för spel')
   const computerChoise = ref(-1)
   const reset = ref(true)
